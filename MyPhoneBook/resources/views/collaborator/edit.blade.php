@@ -47,43 +47,42 @@
             </div>
 
             <div class="mt-4">
-                <x-label for="street" :value="__('Street')" />
+                <x-label for="col_street" :value="__('Street')" />
 
-                <x-input id="street" class="block mt-1 w-full form-control" type="string" name="street" :value="$collaborator->col_street" required autofocus />
+                <x-input id="col_street" class="block mt-1 w-full form-control" type="string" name="col_street" :value="$collaborator->col_street" required autofocus />
             </div>
 
             <div class="mt-4">
-                <x-label for="code" :value="__('Postal code')" />
+                <x-label for="col_code" :value="__('Postal code')" />
 
-                <x-input id="code" class="form-control block mt-1 w-full" type="integer" name="code" :value="$collaborator->col_code" required autofocus />
+                <x-input id="col_code" class="form-control block mt-1 w-full" type="integer" name="col_code" :value="$collaborator->col_code" required autofocus />
             </div>
 
             <div class="mt-4">
-                <x-label for="city" :value="__('City')" />
+                <x-label for="col_city" :value="__('City')" />
 
-                <x-input id="city" class="form-control block mt-1 w-full" type="string" name="city" :value="$collaborator->col_city" required autofocus />
+                <x-input id="col_city" class="form-control block mt-1 w-full" type="string" name="col_city" :value="$collaborator->col_city" required autofocus />
             </div>
 
             <div class="mt-4">
-                <x-label for="phone" :value="__('Phone')" />
+                <x-label for="col_phone" :value="__('Phone')" />
 
-                <x-input id="phone" class="form-control block mt-1 w-full" type="string" name="phone" :value="$collaborator->col_phone" required autofocus />
+                <x-input id="col_phone" class="form-control block mt-1 w-full" type="string" name="col_phone" :value="$collaborator->col_phone" required autofocus />
             </div>
 
             <div class="mt-4">
-                <x-label for="email" :value="__('Email')" />
+                <x-label for="col_email" :value="__('Email')" />
 
-                <x-input id="email" class="form-control block mt-1 w-full" type="string" name="email" :value="$collaborator->col_email" required autofocus />
+                <x-input id="col_email" class="form-control block mt-1 w-full" type="string" name="col_email" :value="$collaborator->col_email" required autofocus />
             </div>
 
             <div class="mt-4">
-                <x-label for="company" :value="__('Company')" />
+                <x-label for="company_id" :value="__('Company')" />
 
-                <select class="form-control block mt-1 w-full" name="company_name" id="companies">
-
-                    <option value="{{ $company->name }}">{{ $company->name }}</option>
+                <select class="form-control block mt-1 w-full" name="company_id" id="companies">
+                    <option value=<?php echo App\Models\Company::where('name', $company->name)->first()->id ?>>{{ $company->name }}</option>
                     @foreach ($companies as $company)
-                        <option value="{{ $company->name }}">{{ $company->name }}</option>
+                    <option value=<?php echo App\Models\Company::select('id')->where('name', $company->name)->first()->id ?>>{{ $company->name }}</option>
                     @endforeach
                 </select>
             </div>

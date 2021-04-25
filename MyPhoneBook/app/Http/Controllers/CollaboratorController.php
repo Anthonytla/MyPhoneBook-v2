@@ -18,22 +18,28 @@ class CollaboratorController extends Controller
 
     public function search(Request $request)
     {
-        $collaborators = Collaborator::select('*');
-        if (
-            $request->search_lname || $request->search_fname || $request->search_cname
-            || $request->phone || $request->search_mail
-        ) {
-            try {
-                $company_id = Company::where('name', $request->search_cname)->firstOrFail()->id;
-            } catch (ModelNotFoundException $e) {
-                $company_id = 0;
-            }
-            $collaborators = $collaborators->orWhere('lastname', $request->search_lname)
-                ->orWhere('firstname', $request->search_fname)
-                ->orWhere('company_id', $company_id)
-                ->orWhere('col_phone', $request->search_phone)
-                ->orWhere('col_email', $request->search_email);
+        $collaborators = Collaborator::select("*");
+        try {
+            $company_id = Company::where('name', $request->search_cname)->firstOrFail()->id;
+        } catch (ModelNotFoundException $e) {
+            $company_id = 0;
         }
+        if ($request->search_lname) {
+            $collaborators = $collaborators->where('lastname', $request->search_lname);
+        }
+        if ($request->search_fname) {
+            $collaborators = $collaborators->where('firstname', $request->search_fname);
+        }
+        if ($request->search_cname) {
+            $collaborators = $collaborators->where('comapny_id', $company_id);
+        }
+        if ($request->phone) {
+            $collaborators = $collaborators->where('col_phone', $request->search_phone);
+        }
+        if ($request->search_mail) {
+            $collaborators = $collaborators->where('email', $request->search_mail);
+        }
+        
         return view('collaborator.index', ['collaborators' => $collaborators->paginate(2)->withQueryString()]);
     }
 
@@ -67,7 +73,7 @@ class CollaboratorController extends Controller
     {
         $validated = $request->validate([
             'lastname' => 'required', 'firstname' => 'required', 'street' => 'required',
-            'code' => 'required|max:5', 'city' => 'required',
+            'code' => 'required|max:5|regex:/^[0-9]+$/i', 'city' => 'required',
             'phone' => 'unique:collaborators,col_phone|regex:/^\+336[0-9]{8}$/i',
             'email' => 'unique:collaborators,col_email|email', 'company_name' => 'required'
         ]);
@@ -111,12 +117,13 @@ class CollaboratorController extends Controller
     public function update(Request $request, $id)
     {
         $collaborator = Collaborator::find($id);
+        
         $validated = $request->validate([
             'lastname' => "required", 'firstname' => 'required',
-            'street' => 'required', 'code' => 'required | max:5',
-            'city' => 'required', 'phone' => "exclude_if:phone,$collaborator->col_phone|unique:collaborators,col_phone|regex:/^\+336[0-9]{8}$/i",
-            'email' => "exclude_if:email,$collaborator->col_email|required|unique:collaborators|email",
-            'company_name' => 'required',
+            'col_street' => 'required', 'col_code' => 'required|max:5|regex:/^[0-9]+$/i',
+            'col_city' => 'required', 'col_phone' => "exclude_if:col_phone,$collaborator->col_phone|unique:collaborators|regex:/^\+336[0-9]{8}$/i",
+            'col_email' => "exclude_if:col_email,$collaborator->col_email|required|unique:collaborators|email",
+            'company_id' => 'required',
         ]);
         $collaborator->update($request->all());
         return redirect(route('collaborator_index'))->with('success', 'Collaborator updated successfully');

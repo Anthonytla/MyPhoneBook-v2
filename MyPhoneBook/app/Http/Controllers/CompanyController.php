@@ -17,9 +17,16 @@ class CompanyController extends Controller
     public function search(Request $request)
     {
         $companies = Company::select('*');
-        if ($request->search_name || $request->search_city || $request->search_mail)
+        /*if ($request->search_name || $request->search_city || $request->search_mail)
             $companies = $companies->orWhere('name', $request->search_name)
-                ->orWhere('city', $request->search_city)->orWhere('email', $request->search_mail);
+                ->orWhere('city', $request->search_city)->orWhere('email', $request->search_mail);*/
+        if ($request->search_name)
+            $companies = $companies->where('name', $request->search_name);
+        if ($request->search_city)
+            $companies = $companies->where('city', $request->search_city);
+        if ($request->search_mail)
+            $companies = $companies->where('email', $request->search_mail);
+
         return view('company.index', ['companies' => $companies->paginate(2)->withQueryString()]);
     }
 
@@ -108,7 +115,7 @@ class CompanyController extends Controller
         $company = Company::find($id);
         $validated = $request->validate([
             'name' => "exclude_if:name,$company->name|required|unique:companies",
-            'street' => 'required', 'code' => 'required|regex:/^[0-9]\{1,5\}$/i',
+            'street' => 'required', 'code' => 'required|max:5|regex:/^[0-9]+$/i',
             'city' => 'required', 'phone' => 'regex:/^\+336[0-9]{8}$/i',
             'email' => "exclude_if:email,$company->email|required|unique:companies|email"
         ]);

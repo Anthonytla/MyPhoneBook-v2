@@ -50,30 +50,30 @@
                                     <form action="{{ route('company_destroy',$company->id) }}" method="POST">
                                         <a class="btn btn-outline-primary" href="{{ route('company_show',$company->id) }}">Show</a>
                                         @if (Auth::user()->role != 3)
-                                            <a class="btn btn-outline-success" href="{{ route('company_edit',$company->id) }}">Update</a>
+                                        <a class="btn btn-outline-success" href="{{ route('company_edit',$company->id) }}">Update</a>
 
 
-                                            <div id="myModal" class="modal">
+                                        <div id="myModal" class="modal">
 
-                                                <div class="modal-content">
-                                                    <div class="close">&times;</div>
-                                                    <h5 class="text-center">Are you sure you want to delete {{ $company->name }} ?<br> Collaborators exist</h5>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
-                                                    <button type="button" class="btn btn-secondary">Yes, Delete company</button>
-                                                </div>
+                                            <div class="modal-content">
+                                                <div class="close">&times;</div>
+                                                <h5 class="text-center">Are you sure you want to delete {{ $company->name }} ?<br> Collaborators exist</h5>
                                             </div>
+                                            <div class="modal-footer">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
+                                                <button type="submit" class="btn btn-secondary" id="myBtn">Yes, Delete company</button>
+                                            </div>
+                                        </div>
 
-                                            @if (count($company->collaborators()->get()) > 0)
-                                                <button id="myBtn" class="btn btn-outline-danger">Delete</button>
-                                            @else
+                                        @if (count($company->collaborators()->get()) > 0)
+                                        <button id="myBtn" class="btn btn-outline-danger">Delete</button>
+                                        @else
 
-                                                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
 
-                                            @endif
+                                        @endif
                                         @endif
                                     </form>
                                 </td>
@@ -97,19 +97,22 @@
         var div = document.getElementsByClassName("close")[0];
 
         var cancel = document.getElementById("cancel");
-
-        btn.onclick = function(event) {
-            event.preventDefault();
-            modal.style.display = "block";
+        if (btn) {
+            btn.onclick = function(event) {
+                event.preventDefault();
+                modal.style.display = "block";
+            }
         }
-
-        cancel.onclick = function() {
-            modal.style.display = "none";
+        if (cancel) {
+            cancel.onclick = function() {
+                modal.style.display = "none";
+            }
         }
-        div.onclick = function() {
-            modal.style.display = "none";
+        if (div) {
+            div.onclick = function() {
+                modal.style.display = "none";
+            }
         }
-
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";

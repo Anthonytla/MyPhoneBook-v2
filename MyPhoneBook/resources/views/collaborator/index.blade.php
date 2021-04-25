@@ -46,7 +46,9 @@
                             <th width="110px"> Postal code</th>
                             <th width="110px">Company</th>
                             <th width="110px">Company id</th>
-                            <th width="280px">Action</th>
+                            @if (Auth::user()->role != 3)
+                                <th width="280px">Action</th>   
+                            @endif
                         </tr>
                         <tbody id="myTable">
                             @foreach ($collaborators as $collaborator)
@@ -62,23 +64,27 @@
                                     <td>{{ $collaborator->col_code }}</td>
                                     <td>{{ $company_name }}</td>
                                     <td>{{ $collaborator->company_id }}</td>
-                                    <td>
-                                        <form action="{{ route('collaborator_destroy',$collaborator->id) }}" method="POST">
+                                    @if (Auth::user()->role != 3)
+                                        <td>
+                                            <form action="{{ route('collaborator_destroy',$collaborator->id) }}" method="POST">
 
-                                            <a class="btn btn-outline-success" href="{{ route('collaborator_edit',$collaborator->id) }}">Update</a>
+                                                <a class="btn btn-outline-success" href="{{ route('collaborator_edit',$collaborator->id) }}">Update</a>
 
-                                            @csrf
-                                            @method('DELETE')
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit" class="btn btn-outline-danger">Delete</button>
-                                        </form>
-                                    </td>
+                                                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                     {{ $collaborators->links() }}
-                    <a class="btn btn-outline-success" href="{{ route('collaborator_create') }}"> Create new collaborator</a>
+                    @if (Auth::user()->role != 3)
+                        <a class="btn btn-outline-success" href="{{ route('collaborator_create') }}"> Create new collaborator</a>
+                    @endif
                 </div>
             </div>
         </div>
