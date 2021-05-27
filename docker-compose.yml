@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel
+        ports: 
+            - 3306:3306
+    myphonebook:
+        build: .
+        depends_on:
+            - db
+        ports:
+            - 8000:8000
+        command: bash -c "composer upgrade  && php artisan migrate:fresh --seed && php artisan serv --host 0.0.0.0 --port 8000"
